@@ -20,7 +20,15 @@ describe('testing /api/recipe', () =>{
 
     it('with a valid request, it should respond with status 200', done => {
       superagent.post(`${url}/api/recipe/create`)
-        .send({recipename: `${recipe.recipename}`, notes: `${recipe.notes}`})
+      // resources, favorite, dateCreated, photo
+        .send({
+          recipeName: `${recipe.recipeName}`, 
+          notes: `${recipe.notes}`,
+          resources: `${recipe.resources}`,
+          favorite: `${recipe.favorite}`,
+          dateCreated: `${recipe.dateCreated}`,
+          photo: `${recipe.photo}`,
+        })
         .end((err, res) => {
           expect(res.status).to.equal(200);
           done();
@@ -29,13 +37,28 @@ describe('testing /api/recipe', () =>{
 
     it('with a valid request, it should create a recipe', done => {
       superagent.post(`${url}/api/recipe/create`)
-        .send({recipename: `${recipe.recipename}`, notes: `${recipe.notes}`})
+        .send({
+          recipeName: `${recipe.recipeName}`, 
+          notes: `${recipe.notes}`,
+          resources: `${recipe.resources}`,
+          favorite: `${recipe.favorite}`,
+          dateCreated: `${recipe.dateCreated}`,
+          photo: `${recipe.photo}`,
+        })
         .end((err, res) => {
-          expect(res.body.recipename).to.exist;
-          expect(res.body.notes).to.exist;
           expect(res.body._id).to.exist;
-          expect(res.body.recipename).to.be.a('string');
+          expect(res.body.recipeName).to.exist;
+          expect(res.body.notes).to.exist;
+          expect(res.body.resources).to.exist;
+          expect(res.body.favorite).to.exist;
+          expect(res.body.dateCreated).to.exist;
+          expect(res.body.photo).to.exist;
+          expect(res.body.recipeName).to.be.a('string');
           expect(res.body.notes).to.be.a('string');
+          expect(res.body.resources).to.be.a('string');
+          expect(res.body.favorite).to.be.a('boolean');
+          expect(res.body.dateCreated).to.be.a('string');
+          expect(res.body.photo).to.be.a('string');
           done();
         });
     });
