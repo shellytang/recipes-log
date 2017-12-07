@@ -8,6 +8,8 @@ const server = require('../lib/server');
 const clearDB = require('./lib/clear-db');
 const mockRecipe = require('./lib/mock-recipe');
 
+const Recipe = require('../model/recipe-model');
+
 const url = `http://localhost:${process.env.PORT}`;
 
 describe('testing /api/recipe', () =>{
@@ -111,6 +113,28 @@ describe('testing /api/recipe', () =>{
         .end((err, res) => {
           expect(res.status).to.equal(404);
           done();
+        });
+    });
+  });
+
+  describe('testing GET /api/lists/:id', () => {
+    it('should respond with a list', () => {
+      let tempRecipe;
+      return mockRecipe.createOne()
+        .save()
+        .then(recipe => {
+          tempRecipe = recipe;
+          return superagent.get(`${url}/api/recipes/${recipe._id}`);
+        })
+        .then(res => {
+          expect(res.status).to.equal(200);
+          expect(res.body.recipeName).to.equal(tempRecipe.recipeName);
+          expect(res.body.notes).to.equal(tempRecipe.notes);
+          expect(res.body.resources).to.equal(tempRecipe.resources);
+          expect(res.body.favorite).to.equal(tempRecipe.favorite);
+          expect(res.body.dateCreated).to.exist;
+          expect(res.body._id).to.equal(tempRecipe._id.toString());
+          expect(res.body.photo).to.equal(tempRecipe.photo);
         });
     });
   });
