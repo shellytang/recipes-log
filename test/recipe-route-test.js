@@ -137,5 +137,12 @@ describe('testing /api/recipe', () =>{
           expect(res.body.photo).to.equal(tempRecipe.photo);
         });
     });
+
+    it('with an invalid request, it should respond with status 404', () => {
+      return superagent.get(`${url}/api/recipes/12345`)
+      .then(null, res => {
+        expect(res.status).to.equal(404); //passing, but not sure if this is handled correctly
+      });
+    });
   });
 });
