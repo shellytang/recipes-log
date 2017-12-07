@@ -18,5 +18,13 @@ module.exports = router => {
       .catch(next);
   });
 
+  router.get('/recipes/:id', (req, res, next) => {
+    Recipe.findById(req.params.id)
+    .then(recipe => {
+      res.json(recipe);
+    })
+    .catch(next);
+  });
+
   return router;
 };
