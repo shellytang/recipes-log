@@ -26,5 +26,13 @@ module.exports = router => {
     .catch(next);
   });
 
+  router.delete('/recipes/:id', (req, res, next) => {
+    Recipe.findByIdAndRemove(req.params.id)
+      .then(() => {
+        res.sendStatus(204);
+      })
+      .catch(next);
+  });
+
   return router;
 };
