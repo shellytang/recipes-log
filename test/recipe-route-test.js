@@ -117,7 +117,7 @@ describe('testing /api/recipe', () =>{
     });
   });
 
-  describe('testing GET /api/lists/:id', () => {
+  describe('testing GET /api/recipes/:id', () => {
     it('should respond with a list', () => {
       let tempRecipe;
       return mockRecipe.createOne()
@@ -145,4 +145,25 @@ describe('testing /api/recipe', () =>{
       });
     });
   });
+
+  describe('testing DELETE /api/recpies/:id', () => {
+    it('should return delete the recipe and return status 204', done => {
+      let recipe = mockRecipe.createOne();
+      superagent.delete(`${url}/api/recipes/${recipe._id}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(204);
+          done();
+        });
+    });
+
+    it('with invalid id, it should return a 404 status', done => {
+      let recipe = mockRecipe.createMany();
+      superagent.delete(`${url}/api/recipes/${recipe._id}wrongId`)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          done();
+        });
+    });
+  });
+
 });
