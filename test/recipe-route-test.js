@@ -20,7 +20,7 @@ describe('testing /api/recipe', () =>{
   describe('testing POST /api/recipe', () => {
     let recipe = mockRecipe.createOne();
 
-    it('with a valid request, it should respond with status 200', done => {
+    it('should respond with status 200 with a valid request', done => {
       superagent.post(`${url}/api/recipes`)
       // resources, favorite, dateCreated, photo
         .send({
@@ -37,7 +37,7 @@ describe('testing /api/recipe', () =>{
         });
     });
 
-    it('with a valid request, it should create a recipe', done => {
+    it('it should create a recipe with a valid request', done => {
       superagent.post(`${url}/api/recipes`)
         .send({
           recipeName: `${recipe.recipeName}`, 
@@ -65,7 +65,7 @@ describe('testing /api/recipe', () =>{
         });
     });
 
-    it('with an invalid request, it should respond with status 400', done => {
+    it('it should respond with status 400 with an invalid request', done => {
       superagent.post(`${url}/api/recipes`)
         .send({})
         .end((err, res) => {
@@ -108,7 +108,7 @@ describe('testing /api/recipe', () =>{
         });
     });
 
-    it('with an invalid route, it should respond with status 404', done => {
+    it('should respond with status 404 with an invalid request', done => {
       superagent.post(`${url}/api/recipe`)
         .end((err, res) => {
           expect(res.status).to.equal(404);
@@ -138,7 +138,7 @@ describe('testing /api/recipe', () =>{
         });
     });
 
-    it('with an invalid request, it should respond with status 404', () => {
+    it('should respond with status 404 with an invalid request', () => {
       return superagent.get(`${url}/api/recipes/12345`)
       .then(null, res => {
         expect(res.status).to.equal(404); //passing, but not sure if this is handled correctly
@@ -146,7 +146,7 @@ describe('testing /api/recipe', () =>{
     });
   });
 
-  describe('testing DELETE /api/recpies/:id', () => {
+  describe('testing DELETE /api/recipes/:id', () => {
     it('should return delete the recipe and return status 204', done => {
       let recipe = mockRecipe.createOne();
       superagent.delete(`${url}/api/recipes/${recipe._id}`)
@@ -166,4 +166,38 @@ describe('testing /api/recipe', () =>{
     });
   });
 
+  describe('testing PUT /api/recipes/:id', () => {
+    it('should return the recipe with updated info', () => {
+      let mockUpdate = {recipeName: 'breakfast tacos', notes: 'add avocado and hot sauce', favorite: true};
+      return mockRecipe.createOne()
+        .save()
+        .then(recipe => {
+          return superagent.put(`${url}/api/recipes/${recipe._id}`)
+          .send(mockUpdate)
+          .then(res => {
+            expect(res.status).to.equal(200);
+            expect(res.body.recipeName).to.equal(mockUpdate.recipeName);
+            expect(res.body.notes).to.equal(mockUpdate.notes);
+            expect(res.body.favorite).to.equal(mockUpdate.favorite);
+            expect(res.body.resources).to.equal(recipe.resources);
+            expect(res.body.dateCreated).to.exist;
+            expect(res.body._id).to.equal(recipe._id.toString());
+            expect(res.body.photo).to.equal(recipe.photo);
+          });
+        });
+    });
+
+    it('should return a 404 status with invalid request', () => {
+      let mockReq = { recipeName: 'quesadillas'};
+      return mockRecipe.createOne()
+        .save()
+        .then(recipe => {
+          return superagent.put(`${url}/api/recipes/${recipe._id}badrequest`)
+          .send(mockReq)
+          .catch(err => {
+            expect(err.status).to.equal(404);
+          });
+        });
+    });
+  });
 });

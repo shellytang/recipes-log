@@ -34,5 +34,14 @@ module.exports = router => {
       .catch(next);
   });
 
+  router.put('/recipes/:id', (req, res, next) => {
+    let options = { new: true, runValidators: true }; //returns modified document (default is false), runs validators on change
+    Recipe.findByIdAndUpdate(req.params.id, req.body, options)
+      .then(recipe => {
+        res.json(recipe);
+      })
+      .catch(next);
+  });
+
   return router;
 };
